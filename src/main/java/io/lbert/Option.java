@@ -8,6 +8,10 @@ public interface Option<A> {
     <B> Option<B> map(Function<A, B> func);
     <B> Option<B> flatMap(Function<A, Option<B>> func);
     A getOrElse(Supplier<A> other);
+    boolean isDefined();
+    default boolean isEmpty() {
+        return !isDefined();
+    }
 
     @SuppressWarnings("unchecked")
     static <A> None<A> none() {
@@ -47,6 +51,11 @@ public interface Option<A> {
         }
 
         @Override
+        public boolean isDefined() {
+            return true;
+        }
+
+        @Override
         public String toString() {
             return "Some(" + value.toString() + ")";
         }
@@ -62,7 +71,7 @@ public interface Option<A> {
             }
 
             var some = (Some) o;
-            return some.value == value;
+            return some.value.equals(value);
         }
     }
 
@@ -87,6 +96,11 @@ public interface Option<A> {
         @Override
         public A getOrElse(Supplier<A> other) {
             return other.get();
+        }
+
+        @Override
+        public boolean isDefined() {
+            return false;
         }
 
         @Override

@@ -86,7 +86,7 @@ public interface Either<L, R> {
             }
 
             var left = (Left) o;
-            return left.left.equals(left);
+            return left.left.equals(this.left);
         }
     }
 
@@ -146,12 +146,14 @@ public interface Either<L, R> {
                 return true;
             }
 
+            System.out.println("am i here");
             if(!(o instanceof Right)) {
+                System.out.println("how about here?");
                 return false;
             }
 
             var right = (Right<L, R>) o;
-            return right.right.equals(right);
+            return right.right.equals(this.right);
         }
     }
 }

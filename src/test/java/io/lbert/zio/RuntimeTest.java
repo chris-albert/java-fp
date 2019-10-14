@@ -12,5 +12,12 @@ public class RuntimeTest {
         UIO<Integer> uio = UIO.succeed(10);
         assertEquals(Runtime.attempt(uio), Either.right(10));
     }
+
+    @Test
+    public void attemptOnFailShouldBeLeft() {
+        IO<Integer, Object> uio = ZIO.fail(10);
+        assertEquals(Runtime.attempt(uio), Either.left(10));
+    }
+
 }
 

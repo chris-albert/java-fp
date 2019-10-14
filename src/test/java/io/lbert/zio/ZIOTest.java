@@ -1,6 +1,8 @@
 package io.lbert.zio;
 
+import io.lbert.Either;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ZIOTest {
 
@@ -8,6 +10,6 @@ public class ZIOTest {
     public void mapOnSuccessShouldReturnResult() {
 
         UIO<Integer> uio = ZIO.succeed(10);
-
+        assertEquals(Runtime.attempt(uio), Either.right(10));
     }
 }

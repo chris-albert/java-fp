@@ -10,6 +10,7 @@ public class ZIOTest {
     public void mapOnSuccessShouldReturnResult() {
 
         UIO<Integer> uio = ZIO.succeed(10);
+//        UIO<Integer> uioNew = uio.map(i -> i + 1);
         assertEquals(Runtime.attempt(uio), Either.right(10));
     }
 }

@@ -8,6 +8,7 @@ public interface Either<L, R> {
     <LL> Either<LL, R> lFlatMap(Function<L, Either<LL, R>> func);
     <RR> Either<L, RR> rMap(Function<R, RR> func);
     <RR> Either<L, RR> rFlatMap(Function<R, Either<L, RR>> func);
+    <A> A fold(Function<L, A> leftMap, Function<R, A> rightMap);
 
     boolean isLeft();
     default boolean isRight() {
@@ -55,7 +56,12 @@ public interface Either<L, R> {
             return (Either<L, RR>) this;
         }
 
-        @Override
+      @Override
+      public <A> A fold(Function<L, A> leftMap, Function<R, A> rightMap) {
+        return leftMap.apply(left);
+      }
+
+      @Override
         public boolean isLeft() {
             return true;
         }
@@ -120,7 +126,12 @@ public interface Either<L, R> {
             return func.apply(right);
         }
 
-        @Override
+      @Override
+      public <A> A fold(Function<L, A> leftMap, Function<R, A> rightMap) {
+        return rightMap.apply(right);
+      }
+
+      @Override
         public boolean isLeft() {
             return false;
         }
@@ -146,9 +157,7 @@ public interface Either<L, R> {
                 return true;
             }
 
-            System.out.println("am i here");
             if(!(o instanceof Right)) {
-                System.out.println("how about here?");
                 return false;
             }
 

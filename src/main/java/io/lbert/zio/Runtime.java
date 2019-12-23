@@ -11,11 +11,11 @@ public class Runtime {
     Either<E, B> result = null;
     switch (zio.getTag()) {
       case SUCCEED:
-        ZIO.Succeed<A> succeed = (ZIO.Succeed<A>) zio;
+        ZIO.Succeed<A, E> succeed = (ZIO.Succeed<A, E>) zio;
         result = (Either<E, B>) Either.right(succeed.getValue());
         break;
       case FAIL:
-        ZIO.Fail<E> fail = (ZIO.Fail<E>) zio;
+        ZIO.Fail<E, A> fail = (ZIO.Fail<E, A>) zio;
         result = Either.left(fail.getError());
         break;
       case MAP:

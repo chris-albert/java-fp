@@ -10,12 +10,12 @@ abstract class ZIO<R, E, A> {
 
   abstract Tag getTag();
 
-  public static <A> ZIO<Object, Nothing, A> succeed(A a) {
-    return new Succeed<A>(a);
+  public static <A, E> ZIO<Object, E, A> succeed(A a) {
+    return Succeed.of(a);
   }
 
-  public static <E> ZIO<Object, E, Object> fail(E e) {
-    return new Fail<E>(e);
+  public static <E, A> ZIO<Object, E, A> fail(E e) {
+    return Fail.of(e);
   }
 
   public static <E, A> ZIO<Object, E, A> fromEither(Either<E, A> either) {
@@ -62,7 +62,7 @@ abstract class ZIO<R, E, A> {
   }
 
   @Value(staticConstructor = "of")
-  static class Succeed<A> extends ZIO<Object, Nothing, A> {
+  static class Succeed<A, E> extends ZIO<Object, E, A> {
 
     A value;
 
@@ -84,7 +84,7 @@ abstract class ZIO<R, E, A> {
   }
 
   @Value(staticConstructor = "of")
-  static class Fail<E> extends ZIO<Object, E, Object> {
+  static class Fail<E, A> extends ZIO<Object, E, A> {
 
     E error;
 

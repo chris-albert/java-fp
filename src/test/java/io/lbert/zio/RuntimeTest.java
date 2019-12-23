@@ -9,7 +9,7 @@ public class RuntimeTest {
 
   @Test
   public void attemptOnSuccessShouldBeRight() {
-    ZIO<Object, Nothing, Integer> uio = ZIO.succeed(10);
+    ZIO<Object, Object, Integer> uio = ZIO.succeed(10);
     assertEquals(Runtime.attempt(uio), Either.right(10));
   }
 
@@ -21,15 +21,15 @@ public class RuntimeTest {
 
   @Test
   public void mapOnSuccessShouldMapValue() {
-    ZIO<Object, Nothing, Integer> uio = ZIO.succeed(10);
-    ZIO<Object, Nothing, Integer> newUIO = uio.map((i) -> i + 10);
+    ZIO<Object, Object, Integer> uio = ZIO.succeed(10);
+    ZIO<Object, Object, Integer> newUIO = uio.map((i) -> i + 10);
     assertEquals(Runtime.attempt(newUIO), Either.right(20));
   }
 
   @Test
   public void mapOnSuccessShouldMapValueToDifferentType() {
-    ZIO<Object, Nothing, Integer> uio = ZIO.succeed(10);
-    ZIO<Object, Nothing, String> newUIO = uio.map(Object::toString);
+    ZIO<Object, Object, Integer> uio = ZIO.succeed(10);
+    ZIO<Object, Object, String> newUIO = uio.map(Object::toString);
     assertEquals(Runtime.attempt(newUIO), Either.right("10"));
   }
 
@@ -67,16 +67,15 @@ public class RuntimeTest {
 
   @Test
   public void flatMapOnSuccessShouldMapValue() {
-    ZIO<Object, Nothing, Integer> uio = ZIO.succeed(10);
-    ZIO<Object, Nothing, Integer> newUIO = uio.flatMap((i) -> ZIO.succeed(i + 10));
+    ZIO<Object, Object, Integer> uio = ZIO.succeed(10);
+    ZIO<Object, Object, Integer> newUIO = uio.flatMap((i) -> ZIO.succeed(i + 10));
     assertEquals(Runtime.attempt(newUIO), Either.right(20));
   }
 
   @Test
   public void flatMapOnFailureShouldNotMapValue() {
-    var a = (ZIO<Object, Integer, Integer>) ZIO.succeed(10);
     ZIO<Object, Integer, Object> uio = ZIO.fail(10);
-    ZIO<Object, Integer, Integer> newUIO = uio.flatMap(i -> (ZIO<Object, Integer, Integer>) ZIO.succeed(10));
+    ZIO<Object, Integer, Integer> newUIO = uio.flatMap(i -> ZIO.succeed(10));
     assertEquals(Runtime.attempt(newUIO), Either.left(10));
   }
 }

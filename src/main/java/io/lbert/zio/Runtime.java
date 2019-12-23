@@ -23,6 +23,10 @@ public class Runtime {
         Either<E, A> res = attempt(map.zio);
         result = res.rMap(map.mapping);
         break;
+      case EFFECT_TOTAL:
+        ZIO.EffectTotal<A> effect = (ZIO.EffectTotal<A>) zio;
+        result = null;
+        break;
     }
 
 

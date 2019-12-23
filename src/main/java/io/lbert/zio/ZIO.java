@@ -17,13 +17,19 @@ abstract class ZIO<R, E, A> {
     return new Fail<E>(e);
   }
 
-  public static <E, A> ZIO<Object, E, A> fromEither(Either<E,A> either) {
-    return null;
-//    return either.fold(l -> fail(l),r -> succeed(r));
+  public static <E, A> ZIO<Object, E, A> fromEither(Either<E, A> either) {
+    return either.fold(
+        l -> (ZIO<Object, E, A>) fail(l),
+        r -> (ZIO<Object, E, A>) succeed(r)
+    );
+  }
+
+  public static <A> ZIO<Object, Throwable, A> effect(Supplier<A> func) {
+    return new EffectTotal<>(func);
   }
 
   public <B> ZIO<R, E, B> map(Function<A, B> mapping) {
-    return new Map(this, mapping);
+    return new Map<>(this, mapping);
   }
 
   static class Map<R, E, A, B> extends ZIO<R, E, B> {
@@ -72,7 +78,7 @@ abstract class ZIO<R, E, A> {
     }
   }
 
-  static class EffectTotal<A> extends ZIO<Object, Nothing, A> {
+  static class EffectTotal<A> extends ZIO<Object, Throwable, A> {
 
     final Supplier<A> effect;
 

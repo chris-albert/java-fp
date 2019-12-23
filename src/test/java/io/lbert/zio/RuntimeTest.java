@@ -51,5 +51,11 @@ public class RuntimeTest {
     ZIO<Object, Integer, String> zio = ZIO.fromEither(Either.left(10));
     assertEquals(Runtime.attempt(zio), Either.left(10));
   }
+
+  @Test
+  public void effectShouldBeValueIfGood() {
+    ZIO<Object, Throwable, Integer> zio = ZIO.effect(() -> 10);
+    assertEquals(Runtime.attempt(zio), Either.right(10));
+  }
 }
 

@@ -1,8 +1,10 @@
 package io.lbert.zio;
 
 import io.lbert.Either;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -19,14 +21,15 @@ abstract class ZIO<R, E, A> {
   }
 
   public static <E, A> ZIO<Object, E, A> fromEither(Either<E, A> either) {
-    return either.fold(
-        l -> (ZIO<Object, E, A>) fail(l),
-        r -> (ZIO<Object, E, A>) succeed(r)
-    );
+    return either.fold(ZIO::fail, ZIO::succeed);
   }
 
   public static <A> ZIO<Object, Throwable, A> effect(Supplier<A> func) {
-    return new EffectTotal<>(func);
+    return EffectTotal.of(func);
+  }
+
+  public static <A, E> ZIO<Object, E, A> effectAsync(Consumer<Consumer<ZIO<Object, E, A>>> register) {
+    return EffectAsync.of(register);
   }
 
   public <B> ZIO<R, E, B> map(Function<A, B> mapping) {
@@ -84,6 +87,15 @@ abstract class ZIO<R, E, A> {
   }
 
   @Value(staticConstructor = "of")
+  static class EffectAsync <A, E> extends ZIO<Object, E, A> {
+
+    Consumer<Consumer<ZIO<Object, E, A>>> register;
+
+    @Override
+    Tag getTag() {return Tag.EFFECT_ASYNC;}
+  }
+
+  @Value(staticConstructor = "of")
   static class Fail<E, A> extends ZIO<Object, E, A> {
 
     E error;
@@ -93,8 +105,4 @@ abstract class ZIO<R, E, A> {
       return Tag.FAIL;
     }
   }
-}
-
-
-interface Nothing {
 }

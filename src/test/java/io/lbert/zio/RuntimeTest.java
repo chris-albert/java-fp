@@ -78,5 +78,11 @@ public class RuntimeTest {
     ZIO<Object, Integer, Integer> newUIO = uio.flatMap(i -> ZIO.succeed(10));
     assertEquals(Runtime.attempt(newUIO), Either.left(10));
   }
+
+//  @Test
+//  public void effectAsyncShouldRegisteSuccessCallback() {
+//    ZIO<Object, Object, Integer> zio = ZIO.effectAsync(callback -> callback.accept(ZIO.succeed(10)));
+//    assertEquals(Runtime.attempt(zio), Either.right(10));
+//  }
 }
 

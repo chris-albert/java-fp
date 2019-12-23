@@ -5,5 +5,6 @@ enum Tag {
   FLAT_MAP,
   SUCCEED,
   EFFECT_TOTAL,
+  EFFECT_ASYNC,
   FAIL;
 }

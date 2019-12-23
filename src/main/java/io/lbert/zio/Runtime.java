@@ -33,6 +33,14 @@ public class Runtime {
         var a = Try.of(effect.getEffect()).toEither();
         result = (Either<E, B>) a;
         break;
+      case EFFECT_ASYNC:
+        ZIO.EffectAsync<A, E> effectAsync = (ZIO.EffectAsync<A, E>) zio;
+        Either<E, A> effectResult;
+        effectAsync.getRegister().accept(consumer -> {
+          var b = attempt(consumer);
+        });
+        result = null;
+        break;
     }
 
 

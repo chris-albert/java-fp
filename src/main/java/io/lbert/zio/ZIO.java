@@ -1,6 +1,7 @@
 package io.lbert.zio;
 
 import io.lbert.Either;
+import lombok.Value;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -29,18 +30,18 @@ abstract class ZIO<R, E, A> {
   }
 
   public <B> ZIO<R, E, B> map(Function<A, B> mapping) {
-    return new Map<>(this, mapping);
+    return Map.of(this, mapping);
   }
 
+  public <B> ZIO<R, E, B> flatMap(Function<A, ZIO<R, E, B>> mapping) {
+    return FlatMap.of(this, mapping);
+  }
+
+  @Value(staticConstructor = "of")
   static class Map<R, E, A, B> extends ZIO<R, E, B> {
 
-    final ZIO<R, E, A> zio;
-    final Function<A, B> mapping;
-
-    Map(ZIO<R, E, A> zio, Function<A, B> mapping) {
-      this.zio = zio;
-      this.mapping = mapping;
-    }
+    ZIO<R, E, A> zio;
+    Function<A, B> mapping;
 
     @Override
     Tag getTag() {
@@ -48,15 +49,11 @@ abstract class ZIO<R, E, A> {
     }
   }
 
+  @Value(staticConstructor = "of")
   static class FlatMap<R, E, A, B> extends ZIO<R, E, B> {
 
-    final ZIO<R, E, A> zio;
-    final Function<A, ZIO<R, E, B>> mapping;
-
-    FlatMap(ZIO<R, E, A> zio, Function<A, ZIO<R, E, B>> mapping) {
-      this.zio = zio;
-      this.mapping = mapping;
-    }
+    ZIO<R, E, A> zio;
+    Function<A, ZIO<R, E, B>> mapping;
 
     @Override
     Tag getTag() {
@@ -64,13 +61,10 @@ abstract class ZIO<R, E, A> {
     }
   }
 
+  @Value(staticConstructor = "of")
   static class Succeed<A> extends ZIO<Object, Nothing, A> {
 
-    final A value;
-
-    Succeed(A a) {
-      value = a;
-    }
+    A value;
 
     @Override
     Tag getTag() {
@@ -78,13 +72,10 @@ abstract class ZIO<R, E, A> {
     }
   }
 
+  @Value(staticConstructor = "of")
   static class EffectTotal<A> extends ZIO<Object, Throwable, A> {
 
-    final Supplier<A> effect;
-
-    EffectTotal(Supplier<A> effect) {
-      this.effect = effect;
-    }
+    Supplier<A> effect;
 
     @Override
     Tag getTag() {
@@ -92,13 +83,10 @@ abstract class ZIO<R, E, A> {
     }
   }
 
+  @Value(staticConstructor = "of")
   static class Fail<E> extends ZIO<Object, E, Object> {
 
-    final E error;
-
-    Fail(E error) {
-      this.error = error;
-    }
+    E error;
 
     @Override
     Tag getTag() {

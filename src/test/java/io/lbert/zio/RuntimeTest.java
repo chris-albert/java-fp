@@ -53,9 +53,31 @@ public class RuntimeTest {
   }
 
   @Test
-  public void effectShouldBeValueIfGood() {
+  public void effectShouldBeRightIfSuccess() {
     ZIO<Object, Throwable, Integer> zio = ZIO.effect(() -> 10);
     assertEquals(Runtime.attempt(zio), Either.right(10));
+  }
+
+  @Test
+  public void effectShouldBeLeftIfFailure() {
+    var re = new RuntimeException("hi");
+    ZIO<Object, Throwable, Integer> zio = ZIO.effect(() -> {throw re;});
+    assertEquals(Runtime.attempt(zio), Either.left(re));
+  }
+
+  @Test
+  public void flatMapOnSuccessShouldMapValue() {
+    ZIO<Object, Nothing, Integer> uio = ZIO.succeed(10);
+    ZIO<Object, Nothing, Integer> newUIO = uio.flatMap((i) -> ZIO.succeed(i + 10));
+    assertEquals(Runtime.attempt(newUIO), Either.right(20));
+  }
+
+  @Test
+  public void flatMapOnFailureShouldNotMapValue() {
+    var a = (ZIO<Object, Integer, Integer>) ZIO.succeed(10);
+    ZIO<Object, Integer, Object> uio = ZIO.fail(10);
+    ZIO<Object, Integer, Integer> newUIO = uio.flatMap(i -> (ZIO<Object, Integer, Integer>) ZIO.succeed(10));
+    assertEquals(Runtime.attempt(newUIO), Either.left(10));
   }
 }
 

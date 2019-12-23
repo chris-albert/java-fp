@@ -12,20 +12,26 @@ public class Runtime {
     switch (zio.getTag()) {
       case SUCCEED:
         ZIO.Succeed<A> succeed = (ZIO.Succeed<A>) zio;
-        result = (Either<E, B>) Either.right(succeed.value);
+        result = (Either<E, B>) Either.right(succeed.getValue());
         break;
       case FAIL:
         ZIO.Fail<E> fail = (ZIO.Fail<E>) zio;
-        result = Either.left(fail.error);
+        result = Either.left(fail.getError());
         break;
       case MAP:
         ZIO.Map<R, E, A, B> map = (ZIO.Map<R, E, A, B>) zio;
-        Either<E, A> res = attempt(map.zio);
-        result = res.rMap(map.mapping);
+        Either<E, A> mr = attempt(map.getZio());
+        result = mr.rMap(map.getMapping());
+        break;
+      case FLAT_MAP:
+        ZIO.FlatMap<R, E, A, B> flatMap = (ZIO.FlatMap<R, E, A, B>) zio;
+        Either<E, A> fmr = attempt(flatMap.getZio());
+        result = fmr.rFlatMap(r -> attempt(flatMap.getMapping().apply(r)));
         break;
       case EFFECT_TOTAL:
         ZIO.EffectTotal<A> effect = (ZIO.EffectTotal<A>) zio;
-        result = null;
+        var a = Try.of(effect.getEffect()).toEither();
+        result = (Either<E, B>) a;
         break;
     }
 

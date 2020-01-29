@@ -37,7 +37,7 @@ public class Runtime {
         ZIO.EffectAsync<A, E> effectAsync = (ZIO.EffectAsync<A, E>) zio;
         Either<E, A> effectResult;
         effectAsync.getRegister().accept(consumer -> {
-          var b = attempt(consumer);
+          Either<E, A> b = attempt(consumer);
         });
         result = null;
         break;
